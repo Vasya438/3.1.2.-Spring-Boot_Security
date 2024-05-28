@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <style>
+
+        .field {
+            clear: both;
+            text-align: right;
+            line-height: 25px;
+        }
+
+        label {
+            float: left;
+            padding-right: 10px;
+        }
+
+        .main {
+            float: left
+        }
+
+        .block {
+            position: absolute;
+            top: 20%;
+            left: 42%;
+        }
+
+        table {
+            border: 1px solid #eee;
+            table-layout: fixed;
+            width: 900px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        th {
+            font-weight: bold;
+            padding: 5px;
+            background: #efefef;
+            border: 1px solid #dddddd;
+            text-align: left;
+        }
+
+        td {
+            padding: 5px 10px;
+            border: 1px solid #eee;
+            text-align: left;
+        }
+
+        table tbody tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #F7F7F7;
+        }
+    </style>
+</head>
+<body>
+<form method="POST" th:action="@{/logout}" th:object="${user}">
+    <div class="main block">
+        <h3>Страница пользователя</h3>
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" th:field="*{name}" id="name" readonly/>
+        </div>
+        <div class="field">
+            <label for="surname">Surname</label>
+            <input type="text" th:field="*{surname}" id="surname" readonly/>
+        </div>
+        <div class="field">Age</label>
+            <input type="text" th:field="*{age}" id="age" readonly/>
+        </div>
+        <div class="field">
+            <label for="username">Username</label>
+            <input type="text" th:field="*{username}" id="username" readonly/>
+        </div>
+        <div class="field">
+            <label>Роли</label>
+            <div>
+                <th:block th:each="roles: ${listRoles}">
+                    <input type="checkbox" th:field="*{roles}"
+                           th:text="${roles.name}" th:value="${roles.id}" disabled readonly/>
+                    <br>
+                </th:block>
+            </div>
+        </div>
+        <br/>
+        <br>
+        <input type="submit" value="Разлогиниться"/>
+    </div>
+</form>
+
+
+</body>
+</html>

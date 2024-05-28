@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <style>
+        .field {
+            clear: both;
+            text-align: right;
+            line-height: 25px;
+        }
+
+        label {
+            float: left;
+            padding-right: 10px;
+        }
+
+        .main {
+            float: left
+        }
+
+        .block {
+            position: relative;
+            left: 150px;
+        }
+
+        .lout {
+            position: relative;
+            left: 10%;
+        }
+
+        table {
+            border: 1px solid #eee;
+            table-layout: fixed;
+            width: 1500px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        th {
+            font-weight: bold;
+            padding: 5px;
+            background: #efefef;
+            border: 1px solid #dddddd;
+            text-align: left;
+        }
+
+        td {
+            padding: 5px 10px;
+            border: 1px solid #eee;
+            text-align: left;
+        }
+
+        table tbody tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #F7F7F7;
+        }
+    </style>
+</head>
+<body>
+
+<h3 align="center">Список пользователей</h3>
+<table align="center">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Возраст</th>
+        <th>Юзернэйм</th>
+        <th>Роли</th>
+        <th>Редактировать</th>
+        <th>Удалить</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${userList}">
+        <td th:utext="${user.getId()}"></td>
+        <td th:utext="${user.getName()}"></td>
+        <td th:utext="${user.getSurname()}"></td>
+        <td th:utext="${user.getAge()}"></td>
+        <td th:utext="${user.getUsername()}"></td>
+        <td th:utext="${user.rolesToString()}"></td>
+        <td>
+            <div>
+                <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">
+                    <button type="button">Edit</button>
+                </a>
+            </div>
+        </td>
+        <td>
+            <div>
+                <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">
+                    <input type="submit" value="Delete"/>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<br/>
+<br/>
+
+<form th:method="POST" th:action="@{/admin}" th:object="${newUser}">
+    <div class="main block">
+        <h3>Добавить нового пользователя</h3>
+        <div class="field">
+            <label for="name">Имя</label>
+            <input type="text" th:field="*{name}" id="name"/>
+        </div>
+        <div class="field">
+            <label for="surname">Фамилия</label>
+            <input type="text" th:field="*{surname}" id="surname"/>
+        </div>
+        <div class="field">
+            <label for="age">Возраст</label>
+            <input type="text" th:field="*{age}" id="age"/>
+        </div>
+        <div class="field">
+            <label for="username">Юзернэйм</label>
+            <input type="text" th:field="*{username}" id="username"/>
+        </div>
+        <div class="field">
+            <label for="password">Пароль</label>
+            <input type="text" th:field="*{password}" id="password"/>
+        </div>
+        <div class="field">
+            <label>Роли</label>
+            <div>
+                <th:block th:each="roles: ${listRoles}">
+                    <input type="checkbox" th:field="*{roles}"
+                           th:text="${roles.name}" th:value="${roles.id}"/>
+                    <br>
+                </th:block>
+            </div>
+        </div>
+        <em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;все поля должны быть заполнены</em>
+        <br/>
+        <br/>
+        <input type="submit" value="Добавить"/>
+    </div>
+</form>
+<br>
+<div class="lout">
+    <form th:method="POST" th:action="@{/logout}">
+        <input type="submit" value="Logout">
+    </form>
+</div>
+</body>
+</html>
