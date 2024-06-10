@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 
-import javax.transaction.Transactional;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -16,12 +14,6 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
-    }
-
-    @Override
-    @Transactional
-    public void andRoles(Role role) {
-        roleRepository.save(role);
     }
 
     @Override

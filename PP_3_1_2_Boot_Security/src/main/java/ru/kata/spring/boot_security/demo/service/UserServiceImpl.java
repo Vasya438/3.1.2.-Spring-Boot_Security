@@ -5,29 +5,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordencoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordencoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordencoder = passwordencoder;
+        this.passwordEncoder = passwordEncoder;
     }
-
-
 
     @Override
     @Transactional
@@ -44,15 +39,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addUser(User user) {
-        user.setPassword(passwordencoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void updateUser(Long id, User updatedUser) {
-        updatedUser.setId(id);
-        updatedUser.setPassword(passwordencoder.encode(updatedUser.getPassword()));
+        if (updatedUser.getPassword().isEmpty()) {
+            Optional<User> user = userRepository.findById(id);
+            updatedUser.setPassword(user.get().getPassword());
+        } else {
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
         userRepository.save(updatedUser);
     }
 
@@ -62,15 +61,14 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-
     @Override
-    public User findByUserName(String username) {
-        return userRepository.findByUserName(username);
+    public Optional<User> findByUserName(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUserName(username);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
